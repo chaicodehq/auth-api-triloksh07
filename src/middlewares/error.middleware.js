@@ -9,5 +9,19 @@
  *    - Return 500 with { error: { message: error.message } }
  */
 export function errorHandler(error, req, res, next) {
-  // Your code here
+  let statusCode = 500;
+  let message = error.message;
+
+  if (error.name === 'ValidationError') {
+    statusCode = 400;
+    message = error.message;
+  }
+  else if (error.code === 11000) {
+    statusCode = 409;
+    message = "Email already exists";
+  }
+
+  return res.status(statusCode).json({
+    error: { message },
+  });
 }

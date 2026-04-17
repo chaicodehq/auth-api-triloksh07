@@ -8,7 +8,8 @@ import { User } from '../models/user.model.js';
  */
 export async function listUsers(req, res, next) {
   try {
-    // Your code here
+    const allUsers = await User.find({});
+    return res.status(200).json({ users: allUsers });
   } catch (error) {
     next(error);
   }
@@ -24,7 +25,12 @@ export async function listUsers(req, res, next) {
  */
 export async function getUser(req, res, next) {
   try {
-    // Your code here
+    // which one to use?
+    const { id } = req.params;
+    const user = await User.findById(id);
+    // const user = await User.findById({ _id: req.params.id });
+    if (!user) return res.status(404).json({ error: { message: "User not found" } });
+    return res.status(200).json({ user });
   } catch (error) {
     next(error);
   }
@@ -40,7 +46,14 @@ export async function getUser(req, res, next) {
  */
 export async function deleteUser(req, res, next) {
   try {
-    // Your code here
+    const { id } = req.params;
+    
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ error: { message: "User not found" } });
+    
+    await User.deleteOne({ _id: id });
+    
+    return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     next(error);
   }
